@@ -1,0 +1,203 @@
+/* Brand theme tokens and exposure mixin */
+@use "sass:map";
+
+/* Collapse brand-level themes to the four retro colorways only */
+$themes: (
+	"retro1": (
+		brand-bg: #2a231d,
+		brand-fg: #f7f1e6,
+		brand-accent: #d39a2a,
+		brand-surface: rgba(255, 244, 219, 0.08),
+		brand-border: rgba(226, 198, 144, 0.6),
+		brand-shadow: 0 10px 32px rgba(90, 70, 40, 0.3)
+	),
+	"retro2": (
+		brand-bg: #241f1a,
+		brand-fg: #fff5e6,
+		brand-accent: #bf7f30,
+		brand-surface: rgba(255, 247, 232, 0.08),
+		brand-border: rgba(221, 191, 160, 0.55),
+		brand-shadow: 0 10px 32px rgba(80, 60, 30, 0.28)
+	),
+	"retro3": (
+		brand-bg: #201b14,
+		brand-fg: #fff2d0,
+		brand-accent: #c86b45,
+		brand-surface: rgba(255, 245, 214, 0.08),
+		brand-border: rgba(209, 178, 120, 0.55),
+		brand-shadow: 0 10px 32px rgba(70, 50, 25, 0.28)
+	),
+	"retro4": (
+		brand-bg: #261f17,
+		brand-fg: #fff6e0,
+		brand-accent: #d1a13a,
+		brand-surface: rgba(255, 240, 208, 0.08),
+		brand-border: rgba(217, 189, 147, 0.6),
+		brand-shadow: 0 10px 32px rgba(85, 65, 30, 0.3)
+	)
+) !default;
+
+/* Extend brand-level tokens to include retro colorways */
+$themes: map.merge($themes, (
+	"retro1": (
+		brand-bg: #2a231d,
+		brand-fg: #f7f1e6,
+		brand-accent: #d39a2a,
+		brand-surface: rgba(255, 244, 219, 0.08),
+		brand-border: rgba(226, 198, 144, 0.6),
+		brand-shadow: 0 10px 32px rgba(90, 70, 40, 0.3)
+	),
+	"retro2": (
+		brand-bg: #241f1a,
+		brand-fg: #fff5e6,
+		brand-accent: #bf7f30,
+		brand-surface: rgba(255, 247, 232, 0.08),
+		brand-border: rgba(221, 191, 160, 0.55),
+		brand-shadow: 0 10px 32px rgba(80, 60, 30, 0.28)
+	),
+	"retro3": (
+		brand-bg: #201b14,
+		brand-fg: #fff2d0,
+		brand-accent: #c86b45,
+		brand-surface: rgba(255, 245, 214, 0.08),
+		brand-border: rgba(209, 178, 120, 0.55),
+		brand-shadow: 0 10px 32px rgba(70, 50, 25, 0.28)
+	),
+	"retro4": (
+		brand-bg: #261f17,
+		brand-fg: #fff6e0,
+		brand-accent: #d1a13a,
+		brand-surface: rgba(255, 240, 208, 0.08),
+		brand-border: rgba(217, 189, 147, 0.6),
+		brand-shadow: 0 10px 32px rgba(85, 65, 30, 0.3)
+	)
+));
+
+/* Add default theme with Phase 4 backgrounds */
+$themes: map.merge($themes, (
+	"default": (
+		brand-bg: #261f17,
+		brand-fg: #fff6e0,
+		brand-accent: #d1a13a,
+		brand-surface: rgba(255, 240, 208, 0.08),
+		brand-border: rgba(217, 189, 147, 0.6),
+		brand-shadow: 0 10px 32px rgba(85, 65, 30, 0.3)
+	)
+));
+
+/* Retro section colorways */
+$sectionThemes: (
+	"retro1": (
+		splash: (
+			section-bg: #f6e7c1,
+			frame-bg: #fff4db,
+			frame-border: #e2c690,
+			section-text: #3a2f28,
+			section-link: #a55c00,
+			section-title: #8b4e00
+		),
+		details: (
+			section-bg: #ffe7a0,
+			frame-bg: #fff4db,
+			frame-border: #e0bd78,
+			section-text: #3a2f28,
+			section-link: #7e56a6,
+			section-title: #5a3d7e
+		),
+		signup: (
+			section-bg: #ffd1a8,
+			frame-bg: #fff0e4,
+			frame-border: #e7a876,
+			section-text: #3a2f28,
+			section-link: #2f6f8a,
+			section-title: #1f4d61
+		),
+		footer: (
+			section-bg: #e7c57a,
+			frame-bg: #fff3d2,
+			frame-border: #d0aa55,
+			section-text: #3a2f28,
+			section-link: #6f5aa8,
+			section-title: #4b3a73
+		)
+	),
+	"retro2": (
+		splash: (section-bg: #f7edd8, frame-bg: #fff7e8, frame-border: #ddbfa0, section-text: #2e2a26, section-link: #8a4d2f, section-title: #6e3e26),
+		details: (section-bg: #ffe49c, frame-bg: #fff3de, frame-border: #d9b06a, section-text: #2e2a26, section-link: #6b5fb0, section-title: #4b4680),
+		signup: (section-bg: #ffcaa6, frame-bg: #ffefe6, frame-border: #e7a784, section-text: #2e2a26, section-link: #2d6d93, section-title: #214e69),
+		footer: (section-bg: #e6c78f, frame-bg: #fff2d7, frame-border: #caa76b, section-text: #2e2a26, section-link: #6b59a8, section-title: #4a3f75)
+	),
+	"retro3": (
+		splash: (section-bg: #f4e3b2, frame-bg: #fff5d6, frame-border: #d1b278, section-text: #2f2a23, section-link: #8a3d3d, section-title: #6d2f2f),
+		details: (section-bg: #ffd48a, frame-bg: #fff0cc, frame-border: #d8a95a, section-text: #2f2a23, section-link: #6a63b5, section-title: #4a4785),
+		signup: (section-bg: #ffb58f, frame-bg: #ffe7dd, frame-border: #e19071, section-text: #2f2a23, section-link: #2a6fa3, section-title: #1e5075),
+		footer: (section-bg: #deb872, frame-bg: #ffefcf, frame-border: #c29a56, section-text: #2f2a23, section-link: #6a5aa6, section-title: #493d73)
+	),
+	"retro4": (
+		splash: (section-bg: #f8e8c6, frame-bg: #fff7e1, frame-border: #d9bd93, section-text: #2f2a23, section-link: #8a5e29, section-title: #6d4b1f),
+		details: (section-bg: #ffe29f, frame-bg: #fff1d8, frame-border: #d5ad74, section-text: #2f2a23, section-link: #6b60b2, section-title: #4b4882),
+		signup: (section-bg: #ffc6a4, frame-bg: #ffedde, frame-border: #e5a17f, section-text: #2f2a23, section-link: #2f6f97, section-title: #224f6c),
+		footer: (section-bg: #e4c07a, frame-bg: #fff0d0, frame-border: #c5a260, section-text: #2f2a23, section-link: #6f5aa8, section-title: #4e3e78)
+	)
+) !default;
+
+$sectionThemes: map.merge($sectionThemes, (
+	"default": (
+		splash: (
+			section-bg: #f8e8c6,
+			frame-bg: #fff7e1,
+			frame-border: #d9bd93,
+			section-text: #2f2a23,
+			section-link: #8a5e29,
+			section-title: #6d4b1f
+		),
+		details: (
+			section-bg: #ffe29f,
+			frame-bg: #fff1d8,
+			frame-border: #d5ad74,
+			section-text: #2f2a23,
+			section-link: #6b60b2,
+			section-title: #4b4882
+		),
+		signup: (
+			section-bg: #ffc6a4,
+			frame-bg: #ffedde,
+			frame-border: #e5a17f,
+			section-text: #2f2a23,
+			section-link: #2f6f97,
+			section-title: #224f6c
+		),
+		footer: (
+			section-bg: #e4c07a,
+			frame-bg: #fff0d0,
+			frame-border: #c5a260,
+			section-text: #2f2a23,
+			section-link: #6f5aa8,
+			section-title: #4e3e78
+		)
+	)
+));
+
+@mixin expose-theme($name) {
+	$map: map.get($themes, $name);
+	@if $map == null { @warn "Theme `#{$name}` not found."; }
+	@each $key, $val in $map { --#{$key}: #{$val}; }
+}
+
+/* Generate section-scoped CSS variables based on [data-theme] + [data-section] */
+@each $tname, $sections in $sectionThemes {
+	:root[data-theme="#{$tname}"] {
+		@each $sname, $vars in $sections {
+			[data-section="#{$sname}"] {
+				@each $k, $v in $vars {
+					--#{$k}: #{$v};
+				}
+			}
+		}
+	}
+}
+
+/* Attribute-driven theme overrides for brand-level tokens */
+@each $name, $mapValues in $themes {
+	:root[data-theme="#{$name}"] { @include expose-theme($name); }
+} 
