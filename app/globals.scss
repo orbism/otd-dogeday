@@ -21,8 +21,6 @@
 	--fs-h2: clamp(22px, 3vw, 32px);
 	--fs-h3: clamp(18px, 2.4vw, 24px);
 
-	/* brand tokens exposed from themes.scss will override via data-theme */
-	@include expose-theme("retro1");
 }
 
 /* Dark scheme fallback if user prefers dark and no theme selected */
@@ -39,8 +37,9 @@ html, body {
 	scroll-behavior: smooth;
 }
 
+
 body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 	color: var(--brand-fg, var(--foreground));
 	font-size: var(--fs-base);
 	line-height: 1.6;
@@ -58,9 +57,9 @@ body {
 	padding: 0;
 }
 
-h1 { font-size: var(--fs-h1); line-height: 1.1; }
-h2 { font-size: var(--fs-h2); line-height: 1.2; margin-top: var(--space-4); }
-h3 { font-size: var(--fs-h3); line-height: 1.3; margin-top: var(--space-3); }
+h1 { font-size: var(--fs-h1); line-height: 1.1; font-family: var(--font-chango), system-ui, sans-serif; }
+h2 { font-size: var(--fs-h2); line-height: 1.2; margin-top: var(--space-4); font-family: var(--font-chango), system-ui, sans-serif; }
+h3 { font-size: var(--fs-h3); line-height: 1.3; margin-top: var(--space-3); font-family: var(--font-chango), system-ui, sans-serif; }
 p  { margin-top: var(--space-2); }
 ul { padding-left: var(--space-6); }
 
@@ -224,45 +223,11 @@ html[data-snap="on"] {
 /* Ensure sections can host overlay pseudo-elements */
 .section { position: relative; }
 
-/* Gradient + grain background for non-splash sections (SVG noise + gradient) */
-[data-section]:not([data-section="splash"]) {
-	/* warm gradient; exact colors come from section tokens */
-	background:
-		linear-gradient(
-			180deg,
-			/* top color */ color-mix(in oklab, var(--section-bg) 80%, var(--brand-accent) 20%),
-			/* bottom color */ var(--section-bg)
-		),
-		url('/noise.svg');
-	/* Optional filter can be applied to parent if needed; keeping background only for now */
-}
 
-[data-section="details"] {
-	background-image: 
-		url('/branding/dd_gradient180.png'),
-		linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-}
 
-[data-section="signup"] {
-	background-image: 
-		url('/branding/dd_gradient.png'),
-		linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-}
-
-[data-section="footer"] {
-	background-image: 
-		url('/branding/dd_gradient180.png'),
-		linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-}
+[data-section="details"] { background: url('/branding/dd_gradient180.png') center / cover no-repeat; }
+[data-section="signup"]  { background: url('/branding/dd_gradient.png') center / cover no-repeat; }
+[data-section="footer"]  { background: url('/branding/dd_gradient180.png') center / cover no-repeat; }
 
 /* Loader overlay + spinner */
 .loader-overlay {
@@ -391,31 +356,3 @@ html[data-snap="on"] {
   }
 } 
 
-[data-theme="default"] {
-	[data-section="details"] {
-		background-image: 
-			url('/branding/dd_gradient180.png'),
-			linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	}
-
-	[data-section="signup"] {
-		background-image: 
-			url('/branding/dd_gradient.png'),
-			linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	}
-
-	[data-section="footer"] {
-		background-image: 
-			url('/branding/dd_gradient180.png'),
-			linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5));
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
-	}
-} 

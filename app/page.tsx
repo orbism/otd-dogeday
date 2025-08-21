@@ -6,31 +6,23 @@ import { site } from "../content/site";
 import styles from "./page.module.css";
 import type { CSSProperties } from "react";
 import MediaCarousel from "../components/MediaCarousel";
+import Signups from "../components/Signups";
 import { mediaItems } from "../content/media";
 
-type ThemeKey = "retro1"|"retro2"|"retro3"|"retro4"|"default"|"sunset"|"aqua";
-
 export default function Home() {
-	const [theme, setTheme] = useState<ThemeKey>("retro1");
 	const [snap, setSnap] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(true);
 	const snapLockRef = useRef(false);
+	const [wizardMode, setWizardMode] = useState<"attendee"|"vip"|"sponsor"|null>(null);
 
 	useEffect(() => {
 		// hydrate from localStorage
-		const t = localStorage.getItem("dd-theme") as ThemeKey | null;
 		const s = localStorage.getItem("dd-snap");
-		if (t) setTheme(t);
 		if (s) setSnap(s === "on");
 		// hide loader quickly after mount
 		const to = setTimeout(() => setLoading(false), 300);
 		return () => clearTimeout(to);
 	}, []);
-
-	useEffect(() => {
-		document.documentElement.setAttribute("data-theme", theme);
-		localStorage.setItem("dd-theme", theme);
-	}, [theme]);
 
 	useEffect(() => {
 		document.documentElement.setAttribute("data-snap", snap ? "on" : "off");
@@ -63,13 +55,6 @@ export default function Home() {
 		window.addEventListener("wheel", onWheel, { passive: true });
 		return () => window.removeEventListener("wheel", onWheel);
 	}, [snap]);
-
-	const cycleTheme = () => {
-		const order: ThemeKey[] = ["retro1","retro2","retro3","retro4","default","sunset","aqua"];
-		const i = order.indexOf(theme);
-		const next = order[(i + 1 + order.length) % order.length];
-		setTheme(next);
-	};
 
 	const headerStyle: CSSProperties = { ["--header-height" as unknown as string]: "56px" } as CSSProperties;
 
@@ -110,7 +95,6 @@ export default function Home() {
 						<Link href={site.links.footer}>Footer</Link>
 					</nav>
 					<div className="actions">
-						<button onClick={cycleTheme}>Theme: {theme}</button>
 						<button onClick={() => setSnap((v) => !v)}>Snap: {snap ? "on" : "off"}</button>
 					</div>
 				</div>
@@ -179,7 +163,7 @@ export default function Home() {
 										}} 
 										onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
 										onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-										onClick={() => alert('Guest Pass modal coming soon!')}
+										onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
 									/>
 									<img 
 										src="/branding/sponsor_btn.png" 
@@ -191,7 +175,7 @@ export default function Home() {
 										}} 
 										onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
 										onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-										onClick={() => alert('Sponsor modal coming soon!')}
+										onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
 									/>
 									<img 
 										src="/branding/vip_btn.png" 
@@ -203,7 +187,7 @@ export default function Home() {
 										}} 
 										onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
 										onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-										onClick={() => alert('VIP modal coming soon!')}
+										onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
 									/>
 								</div>
 							</div>
@@ -228,164 +212,7 @@ export default function Home() {
 							Be part of the most exciting Doge community event of the year. 
 							Sign up to receive exclusive updates and secure your spot at Doge Day 2025 in Chiba.
 						</p>
-						<form 
-							style={{ 
-								display: 'grid', 
-								gap: 16,
-								width: '100%'
-							}}
-							onSubmit={(e) => {
-								e.preventDefault();
-								const form = e.currentTarget;
-								const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
-								const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
-								const ens = (form.elements.namedItem('ens') as HTMLInputElement).value.trim();
-								const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value.trim();
-
-								// Basic validation
-								const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-								const errors: string[] = [];
-
-								if (name.length < 2) errors.push("Name must be at least 2 characters long");
-								if (!emailRegex.test(email)) errors.push("Please enter a valid email address");
-								if (message.length > 500) errors.push("Message cannot exceed 500 characters");
-
-								if (errors.length > 0) {
-									alert(errors.join('\n'));
-									return;
-								}
-
-								// Placeholder for future submission logic
-								alert('Form submitted successfully! We will contact you soon.');
-							}}
-						>
-							<div style={{ display: 'grid', gap: 8 }}>
-								<label 
-									htmlFor="name" 
-									style={{ 
-										fontWeight: 'bold', 
-										marginBottom: 4 
-									}}
-								>
-									Name
-								</label>
-								<input 
-									id="name"
-									name="name"
-									type="text" 
-									placeholder="Your full name" 
-									required
-									style={{ 
-										padding: 10, 
-										borderRadius: 8, 
-										border: '1px solid var(--brand-border)',
-										backgroundColor: 'var(--brand-bg)',
-										color: 'var(--brand-fg)'
-									}} 
-								/>
-							</div>
-
-							<div style={{ display: 'grid', gap: 8 }}>
-								<label 
-									htmlFor="email" 
-									style={{ 
-										fontWeight: 'bold', 
-										marginBottom: 4 
-									}}
-								>
-									Email
-								</label>
-								<input 
-									id="email"
-									name="email"
-									type="email" 
-									placeholder="your.email@example.com" 
-									required
-									style={{ 
-										padding: 10, 
-										borderRadius: 8, 
-										border: '1px solid var(--brand-border)',
-										backgroundColor: 'var(--brand-bg)',
-										color: 'var(--brand-fg)'
-									}} 
-								/>
-							</div>
-
-							<div style={{ display: 'grid', gap: 8 }}>
-								<label 
-									htmlFor="ens" 
-									style={{ 
-										fontWeight: 'bold', 
-										marginBottom: 4 
-									}}
-								>
-									ENS (Optional)
-								</label>
-								<input 
-									id="ens"
-									name="ens"
-									type="text" 
-									placeholder="yourname.eth" 
-									style={{ 
-										padding: 10, 
-										borderRadius: 8, 
-										border: '1px solid var(--brand-border)',
-										backgroundColor: 'var(--brand-bg)',
-										color: 'var(--brand-fg)'
-									}} 
-								/>
-							</div>
-
-							<div style={{ display: 'grid', gap: 8 }}>
-								<label 
-									htmlFor="message" 
-									style={{ 
-										fontWeight: 'bold', 
-										marginBottom: 4 
-									}}
-								>
-									Message
-								</label>
-								<textarea 
-									id="message"
-									name="message"
-									placeholder="Tell us why you're excited about Doge Day 2025!" 
-									rows={4}
-									maxLength={500}
-									style={{ 
-										padding: 10, 
-										borderRadius: 8, 
-										border: '1px solid var(--brand-border)',
-										backgroundColor: 'var(--brand-bg)',
-										color: 'var(--brand-fg)',
-										resize: 'vertical'
-									}} 
-								/>
-							</div>
-
-							<button 
-								type="submit"
-								style={{
-									padding: '12px 24px',
-									borderRadius: 8,
-									border: 'none',
-									backgroundColor: 'var(--brand-accent)',
-									color: 'white',
-									fontWeight: 'bold',
-									cursor: 'pointer',
-									transition: 'background-color 0.3s',
-									marginTop: 16
-								}}
-								onMouseEnter={(e) => {
-									(e.target as HTMLButtonElement).style.backgroundColor = 'var(--brand-accent-hover)';
-								}}
-								onMouseLeave={(e) => {
-									(e.target as HTMLButtonElement).style.backgroundColor = 'var(--brand-accent)';
-								}}
-							>
-								Submit
-							</button>
-						</form>
+						<Signups />
 					</div>
 				</section>
 
