@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import nodemailer from "nodemailer";
+import { SMTPClient } from "emailjs";
+export const runtime = "nodejs";
 
 type FormType = "attendee" | "vip" | "sponsor";
 
@@ -84,15 +85,15 @@ async function sendEmails(data: any, file?: File) {
 	const user = process.env.SMTP_USER || "";
 	const pass = process.env.SMTP_PASS || "";
 	const from = process.env.EMAIL_FROM || user;
-	const to = process.env.EMAIL_TO || user;
-	const cc = process.env.EMAIL_CC || "";
+	const toEnv = process.env.EMAIL_TO || user;
+	const ccEnv = process.env.EMAIL_CC || "";
 
-	if (!host || !user || !pass) return; // silently skip if not configured
+	if (!host || !user || !pass) return;
 
-	const transporter = nodemailer.createTransport({ host, port, auth: { user, pass } });
+	const client = new SMTPClient({ user, password: pass, host, port, tls: true });
 
 	let subject = "Doge Day 2025 Submission";
-	let target = to;
+	let target = toEnv;
 	let ccList: string[] = [];
 
 	if (data?.formType === "vip" || data?.interest === "vip") {
@@ -101,11 +102,20 @@ async function sendEmails(data: any, file?: File) {
 	}
 	if (data?.formType === "sponsor" || data?.interest === "sponsor") {
 		subject = "Sponsorship Interest - Doge Day 2025";
-		if (cc) ccList.push(cc);
+		if (ccEnv) ccList = ccEnv.split(",").map(s => s.trim()).filter(Boolean);
 	}
 
 	const text = JSON.stringify(data, null, 2);
-	const attachments = file ? [{ filename: file.name || "screenshot", content: Buffer.from(await file.arrayBuffer()) }] : [];
+	const attachment: any[] = [];
+	if (file) {
+		const buf = Buffer.from(await file.arrayBuffer());
+		attachment.push({ name: file.name || "screenshot", data: buf.toString("base64"), encoding: "base64" });
+	}
 
-	await transporter.sendMail({ from, to: target, cc: ccList, subject, text, attachments });
+	await new Promise<void>((resolve, reject) => {
+		client.send({ text, from, to: target, cc: ccList, subject, attachment } as any, (err: unknown) => {
+			if (err) reject(err);
+			else resolve();
+		});
+	});
 }
