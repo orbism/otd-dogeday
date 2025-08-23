@@ -160,7 +160,7 @@ html[data-snap="on"] {
 	max-height: 120px;
 	object-fit: contain;
 	width: auto;
-	margin-bottom: -5px; /* Allow slight overflow */
+	margin-bottom: -3em;
 }
 
 .site-header .links {
@@ -311,8 +311,94 @@ html[data-snap="on"] {
   50% { transform: translateX(-50%) scale(1.05); }
 }
 
+/* --- Forms: Phase 1 structural styles --- */
+.form-section {
+  padding-block: var(--space-3);
+  border-top: 1px dashed rgba(0,0,0,0.15);
+  scroll-margin-top: 80px;
+}
+
+.form-title {
+  display: block;
+  font-family: var(--font-chango), system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.2vw, 1.2rem);
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.input-inline {
+  display: inline-block;
+  width: clamp(220px, 40ch, 320px);
+}
+
+.select-inline {
+  display: inline-block;
+  inline-size: max-content;
+  max-inline-size: min(48ch, 90%);
+}
+
+/* --- Phase 2 playful interactions --- */
+@keyframes funky-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 140, 66, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(123, 97, 255, 0.18); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 176, 0, 0.0); }
+}
+
+@keyframes chroma-spark {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.input-animated {
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+.input-animated:focus,
+.input-animated:active {
+  border-color: color-mix(in oklab, var(--brand-accent) 40%, #333 60%);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand-accent) 30%, transparent);
+  background-image: linear-gradient(90deg, #6EE7F9, #F59E0B, #EF4444, #EAB308, #A78BFA, #84CC16);
+  background-size: 400% 400%;
+  animation: chroma-spark 1.6s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input-animated:focus, .input-animated:active { animation: none; }
+}
+
+/* circular checkboxes */
+.checkbox-circle {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in oklab, var(--brand-accent) 35%, #333 65%);
+  background: #fff;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+.checkbox-circle:checked {
+  background: radial-gradient(circle at 30% 30%, #6EE7F9, #F59E0B, #EF4444, #EAB308, #A78BFA, #84CC16);
+  background-size: 200% 200%;
+  border-color: color-mix(in oklab, var(--brand-accent) 50%, #333 50%);
+  animation: funky-pulse 800ms ease-out 1;
+}
+.checkbox-circle:focus-visible { outline: 3px solid color-mix(in oklab, var(--brand-accent) 50%, transparent); outline-offset: 2px; }
+
+/* Referral button: centered and high-contrast */
+.btn-referral {
+  display: inline-block;
+  margin: 8px auto 0;
+  background: #1f2937; /* slate-800 for contrast on beige */
+  color: #fff;
+  border-color: #111827; /* slate-900 */
+}
+
 .site-header {
-  padding: 1em;
+  padding: 0 1em;
 
   
   .header-inner {

@@ -161,22 +161,21 @@ export default function Signups() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} style={{ display: "grid", gap: 16, width: "100%" }}>
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>My Name
-          <input style={inputStyle} {...register("name")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-        </label>
+      <div className="form-section" id="section-basics" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">My Name</label>
+        <input className="input-inline" style={inputStyle} {...register("name")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         {errors.name && <span style={{ color: "#b00020" }}>{errors.name.message as string}</span>}
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>Connect with me here</label>
-        <input placeholder="Twitter" style={inputStyle} {...register("twitter")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-        <input placeholder="Instagram" style={inputStyle} {...register("instagram")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-        <input placeholder="Discord" style={inputStyle} {...register("discord")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+      <div className="form-section" id="section-socials" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">Connect with me here</label>
+        <input className="input-inline input-animated" placeholder="Twitter" style={inputStyle} {...register("twitter")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+        <input className="input-inline input-animated" placeholder="Instagram" style={inputStyle} {...register("instagram")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+        <input className="input-inline input-animated" placeholder="Discord" style={inputStyle} {...register("discord")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
       </div>
 
-      <div style={{ display: "grid", gap: 10 }}>
-        <label>I will be attending Doge Day as a</label>
+      <div className="form-section" id="section-profiles" style={{ display: "grid", gap: 10 }}>
+        <label className="form-title">I will be attending Doge Day as a</label>
         {PROFILE_OPTIONS.map(opt => (
           <label key={opt} style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <Controller
@@ -185,6 +184,7 @@ export default function Signups() {
               render={({ field: { value, onChange } }) => (
                 <input
                   type="checkbox"
+                  className="checkbox-circle"
                   checked={Array.isArray(value) ? value.includes(opt) : false}
                   onChange={() => {
                     const current = Array.isArray(value) ? value : [];
@@ -199,54 +199,58 @@ export default function Signups() {
         ))}
         {profiles.includes("Other") && (
           <>
-            <input placeholder="Tell us more" style={inputStyle} {...register("profileOther")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+            <label className="form-title">Tell us more</label>
+            <input className="input-inline input-animated" placeholder="Tell us more" style={inputStyle} {...register("profileOther")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
             {errors.profileOther && <span style={{ color: "#b00020" }}>{errors.profileOther.message as string}</span>}
           </>
         )}
         {errors.profiles && <span style={{ color: "#b00020" }}>{errors.profiles.message as string}</span>}
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>VIPs and Sponsorships!</label>
-        <select style={inputStyle as any} {...register("interest")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
+      <div className="form-section" id="section-interest" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">VIPs and Sponsorships!</label>
+        <select className="select-inline" style={inputStyle as any} {...register("interest")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
           <option value="none">None</option>
           <option value="vip">I am interested in being a VIP!</option>
           <option value="sponsor">I am interested in basic sponsorship!</option>
         </select>
         {interest === "vip" && (
-          <div style={{ display: "grid", gap: 8 }}>
-            <p style={{ color: "#000" }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. What’s included placeholder.</p>
-            <label>Quantity of VIP tickets I want
-              <input type="number" min={1} max={10} style={inputStyle} {...register("vipQty", { valueAsNumber: true })} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-            </label>
+          <div className="form-section" id="section-vip" style={{ display: "grid", gap: 8 }}>
+            <p style={{ color: "#000", fontWeight: 700 }}>
+              All inclusive stay 10/31-11/3 (can be extended)<br/>
+              Hotel Celestine <a href="https://www.celestinehotels.jp/tokyo-shiba" target="_blank" rel="noopener noreferrer">https://www.celestinehotels.jp/tokyo-shiba</a><br/>
+              All team dinners/travel covered<br/>
+              Flight not covered but larger packages include a 1k flight credit (15k+)
+            </p>
+            <label className="form-title">Quantity of VIP tickets I want</label>
+            <input className="input-inline input-animated" type="number" min={1} max={10} style={inputStyle} {...register("vipQty", { valueAsNumber: true })} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
             {errors.vipQty && <span style={{ color: "#b00020" }}>{errors.vipQty.message as string}</span>}
-            <label>My Company
-              <input style={inputStyle} {...register("vipCompany")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-            </label>
-            <label>Food Allergies
-              <input style={inputStyle} {...register("vipAllergies")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-            </label>
+            <label className="form-title">My Company</label>
+            <input className="input-inline" style={inputStyle} {...register("vipCompany")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+            <label className="form-title">Food Allergies</label>
+            <input className="input-inline" style={inputStyle} {...register("vipAllergies")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
             <p style={{ color: "#000" }}>Note: we will follow up with you and provide more information, and may need some passport details to ensure your booking is handled for you at the hotel correctly.</p>
           </div>
         )}
         {interest === "sponsor" && (
-          <div style={{ display: "grid", gap: 8 }}>
-            <p style={{ color: "#000" }}>Sponsors will get prime visibility throughout the 3 day event 10/31-11/2, physically and digitally. We will work with your company to ensure your brand shines throughout Doge Day.</p>
-            <label>Brand Name
-              <input style={inputStyle} {...register("sBrand")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-            </label>
+          <div className="form-section" id="section-sponsor" style={{ display: "grid", gap: 8 }}>
+            <p style={{ color: "#000", fontWeight: 700 }}>
+              Sponsors will get premium visibility at multiple venues throughout the three day event 10/31-11/2, both physically and digitally<br/>
+              We will work with your company to ensure your brand shines throughout Doge Day
+            </p>
+            <label className="form-title">Company Name</label>
+            <input className="input-inline input-animated" style={inputStyle} {...register("sBrand")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
             {errors.sBrand && <span style={{ color: "#b00020" }}>{errors.sBrand.message as string}</span>}
-            <label>Package Selection
-              <select style={inputStyle as any} {...register("sPkg")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
-                {PKGS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-              </select>
-            </label>
+            <label className="form-title">Package Selection</label>
+            <select className="select-inline input-animated" style={inputStyle as any} {...register("sPkg")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
+              {PKGS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
           </div>
         )}
       </div>
 
-      <div style={{ display: "grid", gap: 10 }}>
-        <label>I create content! (optional)</label>
+      <div className="form-section" id="section-content" style={{ display: "grid", gap: 10 }}>
+        <label className="form-title">I create content! (optional)</label>
         {CONTENT_TYPES.map(opt => (
           <label key={opt} style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <Controller
@@ -255,6 +259,7 @@ export default function Signups() {
               render={({ field: { value, onChange } }) => (
                 <input
                   type="checkbox"
+                  className="checkbox-circle"
                   checked={Array.isArray(value) ? value.includes(opt) : false}
                   onChange={() => {
                     const current = Array.isArray(value) ? value : [];
@@ -269,22 +274,21 @@ export default function Signups() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>I want to make a referral!</label>
+      <div className="form-section" id="section-referral" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">I want to make a referral!</label>
         <p style={{ color: "#000" }}>Invite Two Content Creators for a Free Doge Day Badge/Sticker (IRL, snail mail)</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-          <input placeholder="Creator 1" style={inputStyle} {...register("creator1")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-          <input placeholder="Creator 2" style={inputStyle} {...register("creator2")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+          <input className="input-inline input-animated" placeholder="Creator 1" style={inputStyle} {...register("creator1")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+          <input className="input-inline input-animated" placeholder="Creator 2" style={inputStyle} {...register("creator2")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         </div>
-        <button type="button" className="btn" onClick={openXInvite}>Invite on X</button>
-        <label>Upload screenshot (optional)
-          <input type="file" accept="image/png,image/jpeg,image/webp" {...register("screenshot")} />
-        </label>
+        <button type="button" className="btn btn-referral" onClick={openXInvite} style={{ alignSelf: 'center', width: 'auto' }}>Invite on X</button>
+        <label className="form-title">Upload screenshot (optional)</label>
+        <input className="input-inline input-animated" type="file" accept="image/png,image/jpeg,image/webp" {...register("screenshot")} />
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>Here’s how I heard about Doge Day!</label>
-        <select style={inputStyle as any} {...register("heard")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
+      <div className="form-section" id="section-discovery" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">Here’s how I heard about Doge Day!</label>
+        <select className="select-inline input-animated" style={inputStyle as any} {...register("heard")} onFocus={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff8ea'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#222'; }} onBlur={e => { (e.currentTarget as HTMLSelectElement).style.background = '#fff6e0'; (e.currentTarget as HTMLSelectElement).style.borderColor = '#333'; }}>
           <option value="">Select…</option>
           <option value="x">X Post</option>
           <option value="friend">Friend Referral</option>
@@ -294,17 +298,17 @@ export default function Signups() {
         </select>
         {heard === "other" && (
           <>
-            <input placeholder="Tell us more!" style={inputStyle} {...register("heardOther")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+            <label className="form-title">Tell us more!</label>
+            <input className="input-inline input-animated" placeholder="Tell us more!" style={inputStyle} {...register("heardOther")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
             {errors.heardOther && <span style={{ color: "#b00020" }}>{errors.heardOther.message as string}</span>}
           </>
         )}
         {errors.heard && <span style={{ color: "#b00020" }}>{errors.heard.message as string}</span>}
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <label>Any Event Suggestions? (optional)
-          <textarea rows={3} style={inputStyle} {...register("suggestions")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
-        </label>
+      <div className="form-section" id="section-suggestions" style={{ display: "grid", gap: 8 }}>
+        <label className="form-title">Any Event Suggestions? (optional)</label>
+        <textarea className="input-animated" rows={3} style={inputStyle} {...register("suggestions")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
       </div>
 
       <div>
