@@ -168,7 +168,6 @@ html[data-snap="on"] {
 	max-width: 1800px;
 	margin: 0 auto;
 	height: 65px;
-	overflow: hidden;
 }
 
 .site-header .brand {
@@ -465,10 +464,16 @@ html[data-snap="on"] {
       gap: 1em;
       margin: 0 1em;
     }
+    @media (max-width: 1024px) and (orientation: portrait), (max-width: 768px) {
+      .links { display: none !important; }
+    }
     
     .actions {
       display: flex;
       gap: 0.5em;
+    }
+    @media (max-width: 1024px) and (orientation: portrait), (max-width: 768px) {
+      .hamburger { display: inline-flex !important; }
     }
   }
 }
