@@ -10,51 +10,27 @@ import Signups from "../components/Signups";
 import { mediaItems } from "../content/media";
 
 export default function Home() {
-	const [snap, setSnap] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(true);
 	const snapLockRef = useRef(false);
 	const [wizardMode, setWizardMode] = useState<"attendee"|"vip"|"sponsor"|null>(null);
+    const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
 	useEffect(() => {
-		// hydrate from localStorage
-		const s = localStorage.getItem("dd-snap");
-		if (s) setSnap(s === "on");
 		// hide loader quickly after mount
 		const to = setTimeout(() => setLoading(false), 300);
 		return () => clearTimeout(to);
 	}, []);
 
-	useEffect(() => {
-		document.documentElement.setAttribute("data-snap", snap ? "on" : "off");
-		localStorage.setItem("dd-snap", snap ? "on" : "off");
-	}, [snap]);
-
-	// Quick-snap wheel handler to initiate snapping faster
-	useEffect(() => {
-		if (!snap) return;
-		const onWheel = (e: WheelEvent) => {
-			if (snapLockRef.current) return;
-			const sections = Array.from(document.querySelectorAll<HTMLElement>(".section"));
-			if (sections.length === 0) return;
-			const currentIdx = sections.findIndex(sec => {
-				const rect = sec.getBoundingClientRect();
-				return rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5;
-			});
-			let targetIdx = currentIdx;
-			if (e.deltaY > 0) {
-				targetIdx = Math.min(sections.length - 1, (currentIdx === -1 ? 0 : currentIdx + 1));
-			} else if (e.deltaY < 0) {
-				targetIdx = Math.max(0, (currentIdx === -1 ? 0 : currentIdx - 1));
-			}
-			if (targetIdx !== currentIdx && targetIdx >= 0) {
-				snapLockRef.current = true;
-				sections[targetIdx].scrollIntoView({ behavior: "smooth", block: "start" });
-				setTimeout(() => { snapLockRef.current = false; }, 200);
-			}
-		};
-		window.addEventListener("wheel", onWheel, { passive: true });
-		return () => window.removeEventListener("wheel", onWheel);
-	}, [snap]);
+    // Lock body scroll when mobile menu is open & close on ESC
+    useEffect(() => {
+        if (menuOpen) {
+            const prev = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
+            window.addEventListener('keydown', onKey);
+            return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+        }
+    }, [menuOpen]);
 
 	const headerStyle: CSSProperties = { ["--header-height" as unknown as string]: "56px" } as CSSProperties;
 
@@ -95,10 +71,26 @@ export default function Home() {
 						<Link href={site.links.footer}>Footer</Link>
 					</nav>
 					<div className="actions">
-						<button onClick={() => setSnap((v) => !v)}>Snap: {snap ? "on" : "off"}</button>
+						<button className="btn hamburger" aria-label="Open menu" aria-expanded={menuOpen} aria-controls="mobile-nav" onClick={() => setMenuOpen(true)}>
+							☰
+						</button>
 					</div>
 				</div>
 			</header>
+
+            {menuOpen && (
+                <div id="mobile-nav" className="mobile-nav-overlay" role="dialog" aria-modal="true">
+                    <div className="mobile-nav-inner">
+                        <button className="btn mobile-nav-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>×</button>
+                        <nav className="mobile-nav-links" onClick={() => setMenuOpen(false)}>
+                            <a href={site.links.home}>Home</a>
+                            <a href={site.links.details}>Details</a>
+                            <a href={site.links.signup}>Sign Up</a>
+                            <a href={site.links.footer}>Footer</a>
+                        </nav>
+                    </div>
+                </div>
+            )}
 
 			<main className={`site-main ${styles.main}`}>
 				<section id="splash" className="section splash-section" aria-label="Splash" data-section="splash">

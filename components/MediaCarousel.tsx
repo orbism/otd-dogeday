@@ -46,41 +46,33 @@ export default function MediaCarousel({ items }: { items: MediaItem[] }) {
 	};
 
 	useEffect(() => {
-		if (trackRef.current) {
-			const slides = trackRef.current.children;
-			Array.from(slides).forEach((slide, index) => {
-				const slideElement = slide as HTMLElement;
-				
-				// Hide all slides initially
-				slideElement.style.display = 'none';
-				
-				// Show and position only the active slide and its immediate neighbors
-				if (
-					index === activeIndex || 
-					index === (activeIndex - 1 + items.length) % items.length || 
-					index === (activeIndex + 1) % items.length
-				) {
-					slideElement.style.display = 'flex';
-					
-					if (index === activeIndex) {
-						// Active slide
-						slideElement.style.transform = 'scale(1) translateX(0)';
-						slideElement.style.opacity = '1';
-						slideElement.style.zIndex = '10';
-					} else if (index < activeIndex) {
-						// Slide to the left of active slide
-						slideElement.style.transform = 'scale(0.8) translateX(-50%)';
-						slideElement.style.opacity = '0.3';
-						slideElement.style.zIndex = '5';
-					} else {
-						// Slide to the right of active slide
-						slideElement.style.transform = 'scale(0.8) translateX(50%)';
-						slideElement.style.opacity = '0.3';
-						slideElement.style.zIndex = '5';
-					}
+		if (!trackRef.current) return;
+		const slides = trackRef.current.children;
+		const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
+		Array.from(slides).forEach((slide, index) => {
+			const el = slide as HTMLElement;
+			el.style.display = 'none';
+			if (index === activeIndex) {
+				el.style.display = 'flex';
+				el.style.transform = 'scale(1) translateX(0)';
+				el.style.opacity = '1';
+				el.style.zIndex = '10';
+			} else if (!isMobile) {
+				// show neighbors only on non-mobile
+				if (index === (activeIndex - 1 + items.length) % items.length) {
+					el.style.display = 'flex';
+					el.style.transform = 'scale(0.8) translateX(-50%)';
+					el.style.opacity = '0.3';
+					el.style.zIndex = '5';
 				}
-			});
-		}
+				if (index === (activeIndex + 1) % items.length) {
+					el.style.display = 'flex';
+					el.style.transform = 'scale(0.8) translateX(50%)';
+					el.style.opacity = '0.3';
+					el.style.zIndex = '5';
+				}
+			}
+		});
 	}, [activeIndex, items.length]);
 
 	return (

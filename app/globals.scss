@@ -69,6 +69,9 @@ ul { padding-left: var(--space-6); }
 	margin: 0;
 }
 
+/* Default: hide hamburger on desktop/tablet; shown via media queries */
+.hamburger { display: none; }
+
 a {
 	color: inherit;
 	text-decoration: none;
@@ -78,6 +81,30 @@ a {
 	html:not([data-theme]) {
 		color-scheme: dark;
 	}
+}
+
+/* Mobile responsive containment */
+@media (max-width: 768px) {
+	.site-main { width: 99vw; margin-inline: auto; }
+	.section { width: 100%; padding-inline: 0.5em; margin-inline: auto; }
+	.site-header, .header-inner { max-width: 100vw; }
+	.site-header .links { display: none; }
+	.hamburger { display: inline-flex; }
+	.container-chrome { width: 100% !important; max-width: 100% !important; margin-inline: auto; }
+	.details-grid { width: 100%; }
+
+	/* Scale hero heart within .site-main width with side gutters */
+	.splash-hero-heart { width: 100vw; max-width: 100vw; }
+}
+
+/* iPad and similar portrait widths: use hamburger */
+@media (max-width: 1024px) and (orientation: portrait) {
+	.site-header .links { display: none; }
+	.hamburger { display: inline-flex; }
+	.site-header, .header-inner { max-width: 100vw; }
+	.site-main { width: 99vw; margin-inline: auto; }
+	.section { width: 100%; padding-inline: 0.5em; margin-inline: auto; }
+	.splash-hero-heart { width: 100vw; max-width: 100vw; }
 }
 
 /* Shared container chrome */
@@ -141,6 +168,7 @@ html[data-snap="on"] {
 	max-width: 1800px;
 	margin: 0 auto;
 	height: 65px;
+	overflow: hidden;
 }
 
 .site-header .brand {
@@ -194,6 +222,26 @@ html[data-snap="on"] {
 }
 .site-header a { opacity: 0.95; }
 
+/* Mobile nav overlay */
+.mobile-nav-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 300;
+	background: rgba(0,0,0,0.6);
+	display: grid;
+	place-items: center;
+}
+.mobile-nav-inner {
+	background: var(--brand-surface, rgba(255,255,255,0.96));
+	border: 1px solid var(--brand-border, var(--border-color));
+	border-radius: 12px;
+	width: min(92vw, 480px);
+	padding: 16px;
+}
+.mobile-nav-close { float: right; }
+.mobile-nav-links { display: grid; gap: 12px; margin-top: 12px; }
+.mobile-nav-links a { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--brand-border); background: var(--brand-surface); }
+
 /* Splash hero background (constant across themes) */
 .splash-section { position: relative; min-height: 100vh; padding: 0; border-bottom: 2px brown; }
 .splash-hero {
@@ -213,7 +261,7 @@ html[data-snap="on"] {
 	left: 50%;
 	bottom: 0;
 	transform: translateX(-50%);
-	// max-width: 90%;
+	max-width: 90%;
 	max-height: 100%;
 	object-fit: contain;
 	z-index: 1;
