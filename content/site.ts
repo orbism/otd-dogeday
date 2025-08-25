@@ -7,8 +7,7 @@ export const site = {
 	links: {
 		home: "#splash",
 		details: "#details", 
-		signup: "#signup",
-		footer: "#footer"
+		signup: "#signup"
 	},
 	
 	social: {

@@ -168,7 +168,7 @@ export default function MediaCarousel({ items }: { items: MediaItem[] }) {
 						}}>
 							<img 
 								src={item.src} 
-								alt={item.caption}
+								alt="Gallery image"
 								style={{
 									maxWidth: '100%',
 									maxHeight: '100%',
@@ -178,19 +178,7 @@ export default function MediaCarousel({ items }: { items: MediaItem[] }) {
 								}}
 							/>
 						</div>
-						{index === activeIndex && (
-							<p 
-								style={{
-									marginTop: '10px',
-									textAlign: 'center',
-									opacity: 0.8,
-									width: '100%',
-									padding: '10px 0'
-								}}
-							>
-								{item.caption}
-							</p>
-						)}
+						{/* captions removed */}
 					</div>
 				))}
 			</div>

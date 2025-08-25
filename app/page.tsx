@@ -68,9 +68,12 @@ export default function Home() {
 						<Link href={site.links.home}>Home</Link>
 						<Link href={site.links.details}>Details</Link>
 						<Link href={site.links.signup}>Sign Up</Link>
-						<Link href={site.links.footer}>Footer</Link>
 					</nav>
-					<div className="actions">
+					<div className="actions header-socials">
+						<a href={site.social.website} target="_blank" aria-label="Website"><i className="fa-solid fa-globe" /></a>
+						<a href={site.social.twitter} target="_blank" aria-label="X"><i className="fa-brands fa-x-twitter" /></a>
+						<a href={site.social.telegram} target="_blank" aria-label="Telegram"><i className="fa-brands fa-telegram" /></a>
+						<a href={site.social.discord} target="_blank" aria-label="Discord"><i className="fa-brands fa-discord" /></a>
 						<button
 							className="btn hamburger"
 							aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -91,7 +94,6 @@ export default function Home() {
                             <a href={site.links.home}>Home</a>
                             <a href={site.links.details}>Details</a>
                             <a href={site.links.signup}>Sign Up</a>
-                            <a href={site.links.footer}>Footer</a>
                         </nav>
                     </div>
                 </div>
@@ -153,7 +155,7 @@ export default function Home() {
 						<h2>Event Details</h2>
 						<div className="details-grid" style={{ marginTop: 12 }}>
 							<div>
-								<MediaCarousel items={mediaItems} />
+								<MediaCarousel items={[...mediaItems].sort(() => Math.random() - 0.5)} />
 							</div>
 							<div>
 								<ul style={{ lineHeight: 1.8 }}>
