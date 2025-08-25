@@ -3,10 +3,12 @@ import { z } from "zod";
 import { SMTPClient } from "emailjs";
 export const runtime = "nodejs";
 
+
 type FormType = "attendee" | "vip" | "sponsor";
 
 export async function POST(req: Request) {
 	const contentType = req.headers.get("content-type") || "";
+    try {
 
 	if (contentType.includes("multipart/form-data")) {
 		const form = await req.formData();
@@ -66,6 +68,10 @@ export async function POST(req: Request) {
 	}
 
 	return NextResponse.json({ error: "Unsupported content-type" }, { status: 415 });
+    } catch (err) {
+        console.error("/api/signup POST error:", err);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
 }
 
 /**
@@ -79,6 +85,49 @@ export async function POST(req: Request) {
  * - EMAIL_FROM (from address)
  */
 
+function formatSubmissionText(data: any): string {
+	const lines: string[] = [];
+	const push = (label: string, value: unknown) => {
+		if (value === undefined || value === null || value === "") return;
+		if (Array.isArray(value)) {
+			if (value.length === 0) return;
+			lines.push(`${label}: ${value.join(", ")}`);
+			return;
+		}
+		if (typeof value === "object") return;
+		lines.push(`${label}: ${String(value)}`);
+	};
+
+	push("Form Type", data?.formType || data?.interest || "attendee");
+	push("Name", data?.name);
+	push("Social", data?.social);
+	if (data?.socials) {
+		push("Twitter", data.socials.twitter);
+		push("Instagram", data.socials.instagram);
+		push("Discord", data.socials.discord);
+	}
+	push("Profiles", data?.profiles);
+	if (data?.vip) {
+		push("VIP Quantity", data.vip.quantity);
+		push("VIP Company", data.vip.company);
+		push("VIP Food Allergies", data.vip.foodAllergies);
+	}
+	if (data?.sponsor) {
+		push("Sponsor Brand", data.sponsor.brand);
+		push("Sponsor Package", data.sponsor.package);
+	}
+	push("Content Types", data?.contentTypes);
+	if (data?.referral) {
+		push("Referral Creator 1", data.referral.creator1);
+		push("Referral Creator 2", data.referral.creator2);
+	}
+	push("Heard About", data?.heard);
+	push("Heard Other", data?.heardOther);
+	push("Suggestions", data?.suggestions);
+
+	return lines.join("\n");
+}
+
 async function sendEmails(data: any, file?: File) {
 	const host = process.env.SMTP_HOST || "";
 	const port = Number(process.env.SMTP_PORT || 587);
@@ -88,24 +137,26 @@ async function sendEmails(data: any, file?: File) {
 	const toEnv = process.env.EMAIL_TO || user;
 	const ccEnv = process.env.EMAIL_CC || "";
 
-	if (!host || !user || !pass) return;
+	if (!host || !user || !pass) {
+		console.error("SMTP is not configured. Check SMTP_HOST/SMTP_USER/SMTP_PASS envs.");
+		return;
+	}
 
 	const client = new SMTPClient({ user, password: pass, host, port, tls: true });
 
 	let subject = "Doge Day 2025 Submission";
-	let target = toEnv;
+	let toList = toEnv.split(",").map(s => s.trim()).filter(Boolean);
 	let ccList: string[] = [];
 
 	if (data?.formType === "vip" || data?.interest === "vip") {
 		subject = "VIP Interest - Doge Day 2025";
-		target = "smoke@ownthedoge.com";
 	}
 	if (data?.formType === "sponsor" || data?.interest === "sponsor") {
 		subject = "Sponsorship Interest - Doge Day 2025";
 		if (ccEnv) ccList = ccEnv.split(",").map(s => s.trim()).filter(Boolean);
 	}
 
-	const text = JSON.stringify(data, null, 2);
+	const text = formatSubmissionText(data);
 	const attachment: any[] = [];
 	if (file) {
 		const buf = Buffer.from(await file.arrayBuffer());
@@ -113,9 +164,14 @@ async function sendEmails(data: any, file?: File) {
 	}
 
 	await new Promise<void>((resolve, reject) => {
-		client.send({ text, from, to: target, cc: ccList, subject, attachment } as any, (err: unknown) => {
-			if (err) reject(err);
-			else resolve();
+		client.send({ text, from, to: toList, cc: ccList, subject, attachment } as any, (err: unknown) => {
+			if (err) {
+				console.error("SMTP send error:", err);
+				reject(err);
+			} else {
+				console.log("SMTP send success:", { to: toList, cc: ccList, subject });
+				resolve();
+			}
 		});
 	});
 }

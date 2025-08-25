@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +74,8 @@ const schema = z.object({
 type FormValues = z.input<typeof schema>;
 
 export default function Signups() {
-  const { register, handleSubmit, control, watch, formState: { errors, isValid } } = useForm<FormValues>({
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const { register, handleSubmit, control, watch, formState: { errors, isValid, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: {
@@ -145,10 +146,7 @@ export default function Signups() {
       const res = await fetch("/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ formType: "attendee", ...base }) });
       if (!res.ok) { alert("Submission failed."); return; }
     }
-
-    const share = `Just signed up for #DogeDay2025 hosted by @ownthedoge! Can't wait to connect with the community in person.\n\nJoin me: https://dogeday2025.ownthedoge.com`;
-    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(share)}`;
-    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    setSubmitted(true);
   };
 
   const inputStyle: React.CSSProperties = {
@@ -160,7 +158,7 @@ export default function Signups() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "grid", gap: 16, width: "100%" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "grid", gap: 16, width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
       <div className="form-section" id="section-basics" style={{ display: "grid", gap: 8 }}>
         <label className="form-title">My Name</label>
         <input className="input-inline" style={inputStyle} {...register("name")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
@@ -252,7 +250,7 @@ export default function Signups() {
       <div className="form-section" id="section-content" style={{ display: "grid", gap: 10 }}>
         <label className="form-title">I create content! (optional)</label>
         {CONTENT_TYPES.map(opt => (
-          <label key={opt} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <label key={opt} style={{ display: "flex", gap: 8, alignItems: "baseline", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word" }}>
             <Controller
               control={control}
               name="contentTypes"
@@ -269,7 +267,7 @@ export default function Signups() {
                 />
               )}
             />
-            <span style={{ color: "#000" }}>{opt}</span>
+            <span style={{ color: "#000", overflowWrap: "anywhere", wordBreak: "break-word", maxWidth: "calc(100% - 28px)" }}>{opt}</span>
           </label>
         ))}
       </div>
@@ -281,7 +279,7 @@ export default function Signups() {
           <input className="input-inline input-animated" placeholder="Creator 1" style={inputStyle} {...register("creator1")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
           <input className="input-inline input-animated" placeholder="Creator 2" style={inputStyle} {...register("creator2")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         </div>
-        <button type="button" className="btn btn-referral" onClick={openXInvite} style={{ alignSelf: 'center', width: 'auto' }}>Invite on X</button>
+        <button type="button" className="btn btn-referral btn-left" onClick={openXInvite}>Invite on X</button>
         <label className="form-title">Upload screenshot (optional)</label>
         <input className="input-inline input-animated" type="file" accept="image/png,image/jpeg,image/webp" {...register("screenshot")} />
       </div>
@@ -312,8 +310,26 @@ export default function Signups() {
       </div>
 
       <div>
-        <button type="submit" className="btn btn-primary" disabled={!isValid}>Submit</button>
+        <button type="submit" className="btn btn-primary" disabled={!isValid || isSubmitting}>
+          {isSubmitting ? 'Submitting…' : 'Submit'}
+        </button>
       </div>
+      {submitted && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" onClick={() => setSubmitted(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Thanks! We’ll be in touch.</h2>
+            <p style={{ marginTop: 8 }}>Share your hype on X?</p>
+            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+              <button className="btn btn-contrast" onClick={() => setSubmitted(false)}>Close</button>
+              <button className="btn btn-primary" onClick={() => {
+                const share = `Just signed up for #DogeDay2025 hosted by @ownthedoge! Can't wait to connect with the community in person.\n\nJoin me: https://dogeday2025.ownthedoge.com`;
+                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(share)}`;
+                window.open(shareUrl, "_blank", "noopener,noreferrer");
+              }}>Share on X</button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

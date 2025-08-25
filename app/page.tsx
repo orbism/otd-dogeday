@@ -71,17 +71,22 @@ export default function Home() {
 						<Link href={site.links.footer}>Footer</Link>
 					</nav>
 					<div className="actions">
-						<button className="btn hamburger" aria-label="Open menu" aria-expanded={menuOpen} aria-controls="mobile-nav" onClick={() => setMenuOpen(true)}>
-							☰
+						<button
+							className="btn hamburger"
+							aria-label={menuOpen ? "Close menu" : "Open menu"}
+							aria-expanded={menuOpen}
+							aria-controls="mobile-nav"
+							onClick={() => setMenuOpen(v => !v)}
+						>
+							{menuOpen ? '×' : '☰'}
 						</button>
 					</div>
 				</div>
 			</header>
 
             {menuOpen && (
-                <div id="mobile-nav" className="mobile-nav-overlay" role="dialog" aria-modal="true">
-                    <div className="mobile-nav-inner">
-                        <button className="btn mobile-nav-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>×</button>
+                <div id="mobile-nav" className="mobile-nav-overlay" role="dialog" aria-modal="true" onClick={() => setMenuOpen(false)}>
+                    <div className="mobile-nav-inner" onClick={(e) => e.stopPropagation()}>
                         <nav className="mobile-nav-links" onClick={() => setMenuOpen(false)}>
                             <a href={site.links.home}>Home</a>
                             <a href={site.links.details}>Details</a>
@@ -95,6 +100,27 @@ export default function Home() {
 			<main className={`site-main ${styles.main}`}>
 				<section id="splash" className="section splash-section" aria-label="Splash" data-section="splash">
 					<div className="splash-hero" />
+					{/* Mobile/iPad mini portrait CTA stack */}
+					<div className="hero-cta-stack" aria-hidden="true">
+						<img 
+							src="/branding/guestpass_btn.png"
+							alt="Guest Pass"
+							onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+							style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
+						/>
+						<img 
+							src="/branding/sponsor_btn.png"
+							alt="Sponsor"
+							onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+							style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
+						/>
+						<img 
+							src="/branding/vip_btn.png"
+							alt="VIP"
+							onClick={(e) => { e.preventDefault(); document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+							style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
+						/>
+					</div>
 					<img 
 						src="/branding/heart.png" 
 						alt="Doge Day Heart" 
@@ -118,7 +144,7 @@ export default function Home() {
 							zIndex: 10
 						}}
 					>
-						Learn More Now!
+						L F G
 					</button>
 				</section>
 
@@ -190,10 +216,12 @@ export default function Home() {
 				<section id="signup" className="section" aria-label="Sign Up" data-section="signup">
 					<div className="container-chrome" style={{ 
 						padding: 24, 
-						maxWidth: 700,
+						maxWidth: 820,
+						width: '100%',
 						display: 'flex',
 						flexDirection: 'column',
-						gap: '16px'
+						gap: '16px',
+						overflowX: 'hidden'
 					}}>
 						<h2>Join Doge Day 2025</h2>
 						<p style={{ 
