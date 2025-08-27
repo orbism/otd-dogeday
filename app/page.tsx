@@ -8,6 +8,7 @@ import type { CSSProperties } from "react";
 import MediaCarousel from "../components/MediaCarousel";
 import Signups from "../components/Signups";
 import { mediaItems } from "../content/media";
+import Script from "next/script";
 
 export default function Home() {
 	const [loading, setLoading] = useState<boolean>(true);
@@ -160,13 +161,19 @@ export default function Home() {
 							<div>
 								<ul style={{ lineHeight: 1.8 }}>
 									<li>Date: {site.date}</li>
-									<li>Location: {site.location}</li>
+									<li>Location: <a href="https://x.com/ownthedoge/status/1864041170177036350" target="_blank" rel="noopener noreferrer">{site.location}</a></li>
+									<li>Hotel: <a href="https://www.celestinehotels.jp/en/tokyo-shiba/" target="_blank" rel="noopener noreferrer">The Celestine, Tokyo Shiba</a></li>
 								</ul>
 								<p style={{ marginTop: 12 }}>
 									Dogeday 2025 brings the community together in Chiba for a day of fun,
 									collaboration, and celebration. Expect meetups, showcases, and plenty of
 									much‑wow energy.
 								</p>
+								<div style={{ marginTop: 12, maxWidth: "100%" }}>
+									<blockquote className="twitter-tweet" data-dnt="true">
+										<a href="https://x.com/ownthedoge/status/1864041170177036350">Tweet</a>
+									</blockquote>
+								</div>
 								<div style={{ 
 									display: 'flex', 
 									justifyContent: 'space-between', 
@@ -240,6 +247,14 @@ export default function Home() {
 
 				<section id="footer" className="section" aria-label="Footer" data-section="footer">
 					<footer className="container-chrome" style={{ padding: 24, width: "min(1100px, 92vw)" }}>
+						<div style={{ marginBottom: 16 }}>
+							<a href="https://x.com/ownthedoge/status/1864041170177036350" target="_blank" rel="noopener noreferrer">
+								<img src="/branding/couch.jpg" alt="Kabosu Couch" style={{ width: '100%', height: 'auto', borderRadius: 12 }} />
+							</a>
+						</div>
+						<div style={{ position: 'relative', paddingTop: '56.25%', marginBottom: 16 }}>
+							<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3238.367163279248!2d140.20125149999998!3d35.7417793!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6022897aadf30b2d%3A0x22d93ba4a420199c!2sKabosu%20the%20Doge!5e0!3m2!1sen!2sus!4v1756309144346!5m2!1sen!2sus" style={{ border: 0, position: 'absolute', inset: 0, width: '100%', height: '100%' }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+						</div>
 						<h2>Learn More</h2>
 						<div className="cta-row" style={{ marginTop: 16 }}>
 							<a className="cta" href={site.social.website} target="_blank">Own The Doge website</a>
