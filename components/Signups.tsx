@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm, Controller, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -55,6 +55,11 @@ const schema = z.object({
   heardOther: z.string().default(""),
   suggestions: z.string().default("")
 }).superRefine((val, ctx) => {
+  // Require at least one social handle
+  const hasAnySocial = Boolean(val.twitter?.trim()) || Boolean(val.instagram?.trim()) || Boolean(val.discord?.trim());
+  if (!hasAnySocial) {
+    ctx.addIssue({ path: ["twitter"], code: z.ZodIssueCode.custom, message: "Enter at least one social handle (X, Instagram, or Discord)" });
+  }
   if (val.profiles.includes("Other") && !val.profileOther?.trim()) {
     ctx.addIssue({ path: ["profileOther"], code: z.ZodIssueCode.custom, message: "Please describe 'Other'" });
   }
@@ -75,6 +80,11 @@ type FormValues = z.input<typeof schema>;
 
 export default function Signups() {
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [showError, setShowError] = useState<boolean>(false);
+  const [errorDetails, setErrorDetails] = useState<string[]>([]);
+  const successModalRef = useRef<HTMLDivElement | null>(null);
+  const errorModalRef = useRef<HTMLDivElement | null>(null);
+
   const { register, handleSubmit, control, watch, formState: { errors, isValid, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
     mode: "onChange",
@@ -103,6 +113,25 @@ export default function Signups() {
   const interest = watch("interest");
   const profiles = watch("profiles");
   const heard = watch("heard");
+
+  // Body scroll lock and focus management for modals
+  useEffect(() => {
+    const anyOpen = submitted || showError;
+    if (anyOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const target = submitted ? successModalRef.current : errorModalRef.current;
+      // Ensure the signup section is centered in viewport for perfect modal visibility
+      const signupSection = document.getElementById('signup');
+      signupSection?.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Ensure into view and focus
+      setTimeout(() => {
+        target?.scrollIntoView({ behavior: "smooth", block: "center" });
+        target?.focus();
+      }, 0);
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [submitted, showError]);
 
   function openXInvite() {
     const creator1 = watch("creator1");
@@ -135,18 +164,70 @@ export default function Signups() {
     };
 
     const file = (values.screenshot as FileList | undefined)?.[0];
-    if (file) {
-      const fd = new FormData();
-      fd.append("formType", "attendee");
-      fd.append("payload", new Blob([JSON.stringify(base)], { type: "application/json" }));
-      fd.append("screenshot", file);
-      const res = await fetch("/api/signup", { method: "POST", body: fd });
-      if (!res.ok) { alert("Submission failed."); return; }
-    } else {
-      const res = await fetch("/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ formType: "attendee", ...base }) });
-      if (!res.ok) { alert("Submission failed."); return; }
+    try {
+      if (file) {
+        const fd = new FormData();
+        fd.append("formType", "attendee");
+        fd.append("payload", new Blob([JSON.stringify(base)], { type: "application/json" }));
+        fd.append("screenshot", file);
+        const res = await fetch("/api/signup", { method: "POST", body: fd });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          const message = data?.error || data?.message || "We couldn't send your submission. Please try again. If it still fails, reach us on our socials.";
+          setErrorDetails([String(message)]);
+          setShowError(true);
+          return;
+        }
+      } else {
+        const res = await fetch("/api/signup", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ formType: "attendee", ...base }) });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          const message = data?.error || data?.message || "We couldn't send your submission. Please try again. If it still fails, reach us on our socials.";
+          setErrorDetails([String(message)]);
+          setShowError(true);
+          return;
+        }
+      }
+    } catch (err: any) {
+      setErrorDetails(["Network error. Please try again. If it still fails, reach us on our socials."]);
+      setShowError(true);
+      return;
     }
     setSubmitted(true);
+  };
+
+  const onInvalid = async (errs: FieldErrors<FormValues>) => {
+    // Aggregate friendly error messages
+    const msgs: string[] = [];
+    if (errs.name?.message) msgs.push(String(errs.name.message));
+    if (errs.profiles?.message) msgs.push(String(errs.profiles.message));
+    if (errs.profileOther?.message) msgs.push(String(errs.profileOther.message));
+    if (errs.vipQty?.message) msgs.push(String(errs.vipQty.message));
+    if (errs.sBrand?.message) msgs.push(String(errs.sBrand.message));
+    if (errs.heardOther?.message) msgs.push(String(errs.heardOther.message));
+    // Social group
+    if (!msgs.find(m => m.toLowerCase().includes("social")) && (!watch("twitter") && !watch("instagram") && !watch("discord"))) {
+      msgs.push("Enter at least one social handle (X, Instagram, or Discord)");
+    }
+    // No modal for client validation; use inline errors and scroll only
+
+    // Scroll to the first invalid section for quick correction
+    const firstKey = Object.keys(errs)[0] as keyof FormValues | undefined;
+    const sectionByField: Record<string, string> = {
+      name: 'section-basics',
+      twitter: 'section-socials', instagram: 'section-socials', discord: 'section-socials',
+      profiles: 'section-profiles', profileOther: 'section-profiles',
+      interest: 'section-interest',
+      vipQty: 'section-vip', vipCompany: 'section-vip', vipAllergies: 'section-vip',
+      sBrand: 'section-sponsor', sPkg: 'section-sponsor',
+      contentTypes: 'section-content',
+      creator1: 'section-referral', creator2: 'section-referral',
+      heard: 'section-discovery', heardOther: 'section-discovery',
+      suggestions: 'section-suggestions'
+    };
+    const targetId = firstKey ? sectionByField[String(firstKey)] : undefined;
+    const targetEl = targetId ? document.getElementById(targetId) : null;
+    (targetEl || document.getElementById('signup'))?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const inputStyle: React.CSSProperties = {
@@ -158,18 +239,24 @@ export default function Signups() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "grid", gap: 16, width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} style={{ display: "grid", gap: 16, width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
+      <p style={{ color: "#000", opacity: 0.9 }}>
+        Fields marked <span aria-hidden>✱</span> are required. <strong>At least one social handle</strong> is required.
+      </p>
       <div className="form-section" id="section-basics" style={{ display: "grid", gap: 8 }}>
-        <label className="form-title">My Name</label>
+        <label className="form-title">My Name <span aria-hidden>✱</span></label>
         <input className="input-inline" style={inputStyle} {...register("name")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         {errors.name && <span style={{ color: "#b00020" }}>{errors.name.message as string}</span>}
       </div>
 
       <div className="form-section" id="section-socials" style={{ display: "grid", gap: 8 }}>
-        <label className="form-title">Connect with me here</label>
-        <input className="input-inline input-animated" placeholder="Twitter" style={inputStyle} {...register("twitter")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+        <label className="form-title">Connect with me here <span aria-hidden>✱</span></label>
+        <input className="input-inline input-animated" placeholder="X (formerly the bird app)" style={inputStyle} {...register("twitter")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         <input className="input-inline input-animated" placeholder="Instagram" style={inputStyle} {...register("instagram")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
         <input className="input-inline input-animated" placeholder="Discord" style={inputStyle} {...register("discord")} onFocus={e => { e.currentTarget.style.background = '#fff8ea'; e.currentTarget.style.borderColor = '#222'; }} onBlur={e => { e.currentTarget.style.background = '#fff6e0'; e.currentTarget.style.borderColor = '#333'; }} />
+        {(!watch("twitter") && !watch("instagram") && !watch("discord")) && (
+          <span style={{ color: "#b00020" }}>Enter at least one social handle (X, Instagram, or Discord)</span>
+        )}
       </div>
 
       <div className="form-section" id="section-profiles" style={{ display: "grid", gap: 10 }}>
@@ -310,22 +397,36 @@ export default function Signups() {
       </div>
 
       <div>
-        <button type="submit" className="btn btn-primary" disabled={!isValid || isSubmitting}>
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
           {isSubmitting ? 'Submitting…' : 'Submit'}
         </button>
       </div>
       {submitted && (
         <div className="modal-overlay" role="dialog" aria-modal="true" onClick={() => setSubmitted(false)}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
+          <div className="modal-card" ref={successModalRef} tabIndex={-1} onClick={e => e.stopPropagation()}>
             <h2 className="modal-title">Thanks! We’ll be in touch.</h2>
             <p style={{ marginTop: 8 }}>Share your hype on X?</p>
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
               <button className="btn btn-contrast" onClick={() => setSubmitted(false)}>Close</button>
               <button className="btn btn-primary" onClick={() => {
                 const share = `Just signed up for #DogeDay2025 hosted by @ownthedoge! Can't wait to connect with the community in person.\n\nJoin me: https://dogeday2025.ownthedoge.com`;
-                const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(share)}`;
+                const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(share)}`;
                 window.open(shareUrl, "_blank", "noopener,noreferrer");
               }}>Share on X</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showError && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" onClick={() => setShowError(false)}>
+          <div className="modal-card" ref={errorModalRef} tabIndex={-1} onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">We couldn’t send your submission</h2>
+            <p style={{ marginTop: 8 }}>Please try again. If it still fails, reach us on our social media accounts!</p>
+            {errorDetails.length > 0 && (
+              <div style={{ marginTop: 8, color: "#b00020" }}>{errorDetails[0]}</div>
+            )}
+            <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
+              <button className="btn btn-contrast" onClick={() => setShowError(false)}>Close</button>
             </div>
           </div>
         </div>

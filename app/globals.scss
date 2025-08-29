@@ -209,7 +209,7 @@ html[data-snap="on"] {
 	margin-top: -0.5em; /* Move actions up */
 }
 
-.header-socials { display: flex; align-items: center; gap: 8px; }
+.header-socials { display: flex; align-items: center; gap: 8px; margin-bottom: -0.4em;}
 .header-socials img { display: block; width: 22px; height: 22px; }
 .header-socials a { display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
 .header-socials i { font-size: 20px; line-height: 1; color: var(--brand-fg); transition: all 0.2s ease; }
@@ -298,8 +298,8 @@ html[data-snap="on"] {
     z-index: 0;
 }
 /* outside drop shadow on left/right exteriors */
-[data-section]::before { left: -24px; box-shadow: 12px 0 24px rgba(0,0,0,0.14); }
-[data-section]::after { right: -24px; box-shadow: -12px 0 24px rgba(0,0,0,0.14); }
+// [data-section]::before { left: -24px; box-shadow: 12px 0 24px rgba(0,0,0,0.14); }
+// [data-section]::after { right: -24px; box-shadow: -12px 0 24px rgba(0,0,0,0.14); }
 .splash-hero {
 	position: absolute;
 	inset: 0;
@@ -418,8 +418,8 @@ html[data-snap="on"] {
 .cta-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-4); }
 @media (max-width: 900px) { .cta-row { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 520px) { .cta-row { grid-template-columns: 1fr; } }
-.cta { text-align: center; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--brand-border); background: var(--brand-surface); }
-.cta:hover { filter: brightness(1.05); } 
+.cta { text-align: center; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--brand-border); background: var(--brand-surface); color: var(--brand-fg); transition: background 0.2s ease, color 0.2s ease; }
+.cta:hover, .cta:focus-visible { background: #8a7a57; color: #fff; }
 
 /* Form grid responsive collapse */
 @media (max-width: 520px) {
@@ -548,8 +548,9 @@ html[data-snap="on"] {
     
     .links {
       display: flex;
-      gap: 1em;
+      gap: 1.5em;
       margin: 0 1em;
+      font-weight: 700;
     }
     @media (max-width: 1024px) and (orientation: portrait), (max-width: 768px) {
       .links { display: none !important; }

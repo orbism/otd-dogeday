@@ -1,6 +1,6 @@
 /* Temporary minimal styles while scaffolding */
 .page { min-height: 100vh; display: grid; place-items: center; }
-.main { padding: 0 24px; }
+.main { padding: 0 0; }
 .footer { padding: 24px; }
 .logo { opacity: 0.9; }
 .ctas { display: flex; gap: 12px; margin-top: 16px; }
