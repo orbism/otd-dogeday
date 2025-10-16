@@ -156,30 +156,46 @@ export default function Home() {
 						<h2>Event Details</h2>
 						<div className="details-grid" style={{ marginTop: 12 }}>
 							<div>
-								<MediaCarousel items={[...mediaItems].sort(() => Math.random() - 0.5)} />
-							</div>
-							<div>
+								<div>
 								<ul style={{ lineHeight: 1.8 }}>
-									<li>Date: {site.date}</li>
-									<li>Location: <a href="https://x.com/ownthedoge/status/1864041170177036350" target="_blank" rel="noopener noreferrer">{site.location}</a></li>
-									<li>Hotel: <a href="https://www.celestinehotels.jp/en/tokyo-shiba/" target="_blank" rel="noopener noreferrer">The Celestine, Tokyo Shiba</a></li>
+									<li style={{ display: 'flex' }}>
+										<div><strong>When:</strong>&nbsp;</div>
+										<div style={{ textAlign: 'left' }}>{site.date}</div>
+									</li>
+									<li style={{ display: 'flex' }}>
+										<div><strong>Where:</strong>&nbsp;</div>
+										<div style={{ textAlign: 'left' }}>
+											<a href="https://maps.app.goo.gl/1tFCGtfUVjWbhcGv9" target="_blank" rel="noopener noreferrer" style={{ whiteSpace: 'pre-line' }}>{site.location}</a>
+										</div>
+									</li>
 								</ul>
-								<p style={{ marginTop: 12 }}>
+								<p style={{ marginTop: 12, marginBottom: 12 }}>
 									Dogeday 2025 brings the community together in Chiba for a day of fun,
 									collaboration, and celebration. Expect meetups, showcases, and plenty of
-									much‑wow energy.
+									much‑wow energy. Main event takes place in <a href="https://maps.app.goo.gl/W8uoxZ9EczZAt1zi7" target="_blank" rel="noopener noreferrer" style={{ whiteSpace: 'pre-line' }}>Sakura, Chiba</a> between 11AM - 5PM, local time.
+									
 								</p>
-								<div style={{ marginTop: 12, maxWidth: "100%" }}>
-									<blockquote className="twitter-tweet" data-dnt="true">
-										<a href="https://x.com/ownthedoge/status/1864041170177036350">Tweet</a>
+								</div>
+								<div style={{ padding: '5px', borderRadius: '5px', border: '1px solid brown' }}>
+									<MediaCarousel items={[...mediaItems].sort(() => Math.random() - 0.5)} />
+								</div>
+							</div>
+							<div>
+								
+								<div style={{ marginTop: 12, maxWidth: "100%", display: "flex", justifyContent: "center" }}>
+									<blockquote className="twitter-tweet">
+										<p lang="en" dir="ltr">
+											<a href="https://twitter.com/ownthedoge/status/1864041170177036350"></a>
+										</p>
 									</blockquote>
+									<script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
 								</div>
 								<div style={{ 
 									display: 'flex', 
 									justifyContent: 'space-between', 
 									marginTop: 24, 
 									gap: '16px' 
-								}}>
+									}}>
 									<img 
 										src="/branding/guestpass_btn.png" 
 										alt="Guest Pass" 

@@ -1,7 +1,9 @@
 export const site = {
 	eventName: "Doge Day 2025",
-	location: "Chiba, Japan",
-	date: "November 2025",
+	location: `Sakura Hometown Square,2714-2714 Usuida
+				Sakura, 285-0861
+				Japan`,
+	date: "November 2nd, 2025 | 11AM - 5PM JST ",
 	tagline: "A Celebration of Doge Culture",
 	
 	links: {
